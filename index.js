@@ -5,8 +5,8 @@ app.use(cors());
 const port = 8080;
 
 app.get("/", (req, res) => {
-  res.status(300).send({
-    message: "Unsuccessfull GET CALL",
+  res.status(200).send({
+    message: "Successfull GET CALL",
   });
 });
 
