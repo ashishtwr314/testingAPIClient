@@ -48,7 +48,7 @@ class APICalls {
     return response;
   }
 
-  makeCall(method, url, body, header) {
+  makeCall({ method, url, body, header }) {
     if (validateParameters(method, url, body, header).err) {
       return validateParameters(method, url, body, header);
     }
