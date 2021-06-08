@@ -45,60 +45,57 @@ class APICalls {
       };
     }
 
-    return response.data;
+    return response;
   }
 
-  makeCall(callType, url, body, header) {
-    if (validateParameters(callType, url, body, header).err) {
-      return validateParameters(callType, url, body, header);
-    } else {
-      let res;
-      return new Promise((resolve, reject) => {
-        if (callType.toLocaleLowerCase() == "get") {
-          res = axios.get(url);
-        }
-
-        if (callType.toLocaleLowerCase() == "post") {
-          res = axios.post(url, body, {
-            headers: header,
-          });
-        }
-
-        res
-          .then((res) => {
-            const handledRes = this.handleResponse(res);
-            resolve(handledRes);
-          })
-          .catch((err) => {
-            resolve(this.handleResponse(err));
-          });
-      });
+  makeCall(method, url, body, header) {
+    if (validateParameters(method, url, body, header).err) {
+      return validateParameters(method, url, body, header);
     }
+
+    let res;
+    return new Promise((resolve, reject) => {
+      if (method == "GET") {
+        res = axios.get(url);
+      }
+
+      if (method == "POST") {
+        res = axios.post(url, body, {
+          headers: header,
+        });
+      }
+
+      res
+        .then((res) => {
+          const handledRes = this.handleResponse(res);
+          resolve(handledRes);
+        })
+        .catch((err) => {
+          resolve(this.handleResponse(err));
+        });
+    });
   }
 }
 
-function validateParameters(callType, url, body, header) {
+function validateParameters(method, url, body, header) {
   // VALIDATING THE URL
   if (!url || !isURL(url)) {
     return { err: new Error("Badly formatted URL") };
   }
 
   //VALIDATING THE CALL TYPE
-  if (!callType || typeof callType !== "string") {
+  if (!method || typeof method !== "string") {
     return {
       err: new Error("Please specify a call type [GET, POST, PUT, DELETE]"),
     };
-  } else if (
-    callType.toLocaleLowerCase() !== "get" &&
-    callType.toLocaleLowerCase() !== "post"
-  ) {
+  } else if (method !== "GET" && method !== "POST") {
     return {
       err: new Error("Please pass a valid call type"),
     };
   }
 
   // VALIDATING BODY AND HEADER
-  if (callType.toLocaleLowerCase() == "post") {
+  if (method == "POST") {
     if (!body) {
       return {
         err: new Error("Please pass in a body"),
